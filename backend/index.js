@@ -55,7 +55,7 @@ app.post("/login", async (req, res) => {
 // notes routes connected to notes collection
 app.use("/todos",todosRouter)
 
-app.listen(7070, async () => {
+app.listen(process.env.PORT, async () => {
 	try {
 		await connection;
 		console.log("connection is set with mongodb")
@@ -64,5 +64,5 @@ app.listen(7070, async () => {
 		console.log("connection couldn't be set with mongodb");
 		console.log(err)
 	}
-	console.log("sever has started at port 7070")
+	console.log(`sever has started at port ${process.env.PORT}`)
 })

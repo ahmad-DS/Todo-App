@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const noteSchema = mongoose.Schema({
 
 	title: { type: String, required: true },
-	status: { type: Boolean, required: true,default:false },
+	status: { type: Boolean,default:false },
 	userId: { type: String, required: true }
 },
 	{

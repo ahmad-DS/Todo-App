@@ -1,5 +1,6 @@
 import React from 'react'
 import { useState } from 'react';
+import {useNavigate} from "react-router-dom"
 const initState = {
   name: "",
   email: "",
@@ -8,6 +9,7 @@ const initState = {
 }
 
 const Signup = () => {
+  const navigate=useNavigate()
   const [user, setUser] = useState(initState);
 
   const handleChange = (e) => {
@@ -20,13 +22,17 @@ const Signup = () => {
 
   const handleSubmit=(e)=>{
     e.preventDefault();
-    fetch("https://stark-brook-21533.herokuapp.com/signup",{
+    fetch("http://localhost:8080/signup",{
       method:"POST",
       headers:{"Content-Type":"application/json"},
       body:JSON.stringify(user)
     })
     .then(res=>res.json())
-    .then(res=>{console.log(res)})
+    .then(res=>{
+      console.log(res);
+      alert("sign up successful!")
+      navigate("/login")
+    })
     .catch(err=>{console.log(err)})
   }
   return (

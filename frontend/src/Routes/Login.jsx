@@ -1,8 +1,10 @@
 import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom';
 
 let token=localStorage.getItem("token") || ""
 
 const Login = () => {
+  const navigate=useNavigate()
   const [user, setUser] = useState({email:"",password:""});
 
   const handleChange = (e) => {
@@ -15,7 +17,7 @@ const Login = () => {
 
   const handleSubmit=(e)=>{
     e.preventDefault();
-    fetch("https://stark-brook-21533.herokuapp.com/login",{
+    fetch("http://localhost:8080/login",{
       method:"POST",
       headers:{"Content-Type":"application/json"},
       body:JSON.stringify(user)
@@ -23,7 +25,9 @@ const Login = () => {
     .then(res=>res.json())
     .then(res=>{
       console.log(res);
-      alert("successfully logged in")
+      alert("successfully logged in");
+      navigate("/todos")
+
       localStorage.setItem("token",res.token)
     })
     .catch(err=>{console.log(err)})

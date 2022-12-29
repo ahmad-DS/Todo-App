@@ -8,7 +8,7 @@ const Todos = () => {
 
   const getTodos = () => {
 
-    fetch("https://stark-brook-21533.herokuapp.com/todos", {
+    fetch("http://localhost:8080/todos", {
       method: "GET",
       headers: { "Authorization": `Bearer ${token}` },
     })
@@ -31,7 +31,7 @@ const Todos = () => {
   //add new todo
   const addTodo = () => {
     // console.log("added")
-    fetch(`https://stark-brook-21533.herokuapp.com/todos/create`, {
+    fetch(`http://localhost:8080/todos/create`, {
       method: "POST",
       headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
       body: JSON.stringify({title:newTodo})
@@ -45,7 +45,7 @@ const Todos = () => {
 
   const handleToggle = (id, status) => {
     status = status ? false : true;
-    fetch(`https://stark-brook-21533.herokuapp.com/todos/${id}`, {
+    fetch(`http://localhost:8080/todos/${id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
       body: JSON.stringify({ status })
@@ -56,7 +56,7 @@ const Todos = () => {
 
   }
   const handleDelete = (id) => {
-    fetch(`https://stark-brook-21533.herokuapp.com/todos/${id}`, {
+    fetch(`http://localhost:8080/todos/${id}`, {
       method: "DELETE",
       headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
       // body:JSON.stringify({status})
