@@ -1,56 +1,136 @@
 import React from 'react'
+import {
+  Flex,
+  Box,
+  FormControl,
+  FormLabel,
+  Input,
+  InputGroup,
+  HStack,
+  InputRightElement,
+  Stack,
+  Button,
+  Heading,
+  Text,
+  useColorModeValue,
+} from '@chakra-ui/react';
+import { Link, useNavigate } from "react-router-dom"
 import { useState } from 'react';
-import {useNavigate} from "react-router-dom"
+import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
+
 const initState = {
   name: "",
   email: "",
   password: "",
   age: ""
 }
+function Signup() {
 
-const Signup = () => {
-  const navigate=useNavigate()
+  const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate()
   const [user, setUser] = useState(initState);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     // console.log(name,value)
-    setUser({ ...user, [name]: name=="age"?+value:value })
+    setUser({ ...user, [name]: name == "age" ? +value : value })
 
   }
   console.log(user)
 
-  const handleSubmit=(e)=>{
+  const handleSubmit = (e) => {
     e.preventDefault();
-    fetch("http://localhost:8080/signup",{
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify(user)
+    fetch("http://localhost:8080/signup", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(user)
     })
-    .then(res=>res.json())
-    .then(res=>{
-      console.log(res);
-      alert("sign up successful!")
-      navigate("/login")
-    })
-    .catch(err=>{console.log(err)})
+      .then(res => res.json())
+      .then(res => {
+        console.log(res);
+        alert("sign up successful!")
+        navigate("/login")
+      })
+      .catch(err => { console.log(err) })
   }
+
   return (
-    <div>
-      <h1>Signup </h1>
-      <form onSubmit={handleSubmit}>
-        <input type="text" name="name" placeholder='Enter Name' onChange={handleChange} required/>
-        <br />
-        <input type="text" name="email" placeholder='Enter Email' onChange={handleChange} required/>
-        <br />
-        <input type="text" name="password" placeholder="Enter password" onChange={handleChange} required/>
-        <br />
-        <input type="text" name="age" placeholder='Enter age' onChange={handleChange} required/>
-        <br />
-        <input type="submit" />
-      </form>
-    </div>
+    <Flex
+      minH={'90vh'}
+      align={'center'}
+      justify={'center'}
+      bg={useColorModeValue('gray.50', 'gray.800')}>
+      <Stack spacing={8} mx={'auto'} maxW={'lg'} py={5} px={6}>
+        <Stack align={'center'}>
+          <Heading fontSize={'lg'} color={'black'}>
+            Create Your Account Here
+          </Heading>
+        </Stack>
+        <Box
+          rounded={'lg'}
+          bg={useColorModeValue('white', 'gray.700')}
+          boxShadow={'lg'}
+          p={8}>
+          <form onSubmit={handleSubmit}>
+            <Stack spacing={4}>
+              <FormControl id="Name" isRequired>
+                <FormLabel>Name</FormLabel>
+                <Input name="name" onChange={handleChange} type="text" />
+              </FormControl>
+
+              <FormControl id="email" isRequired>
+                <FormLabel>Email address</FormLabel>
+                <Input name="email" onChange={handleChange} type="email" />
+              </FormControl>
+
+
+              <FormControl id="password" isRequired>
+                <FormLabel>Password</FormLabel>
+                <InputGroup>
+                  <Input name="password" onChange={handleChange} type={showPassword ? 'text' : 'password'} />
+                  <InputRightElement h={'full'}>
+                    <Button
+                      variant={'ghost'}
+                      onClick={() =>
+                        setShowPassword((showPassword) => !showPassword)
+                      }>
+                      {showPassword ? <ViewIcon /> : <ViewOffIcon />}
+                    </Button>
+                  </InputRightElement>
+                </InputGroup>
+              </FormControl>
+
+              <FormControl id="age" isRequired>
+                <FormLabel>Age</FormLabel>
+                <Input name="age" onChange={handleChange} type="number" />
+              </FormControl>
+              <Stack spacing={5} pt={0}>
+                <Button
+                   loadingText="Submitting"
+                   size="lg"
+                   bg={'blue.400'}
+                   color={'white'}
+                   _hover={{
+                     bg: 'black',
+                     color:'white'
+                   }}
+                   type="submit"
+
+                >
+                  Sign up
+                </Button>
+              </Stack>
+              <Stack pt={0}>
+                <Text align={'center'}>
+                  Already a user? <Link color={'blue.400'} to={'/login'}>Login</Link>
+                </Text>
+              </Stack>
+            </Stack>
+          </form>
+        </Box>
+      </Stack>
+    </Flex >
   )
 }
 
-export default Signup;
+export default Signup

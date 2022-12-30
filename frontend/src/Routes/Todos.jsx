@@ -1,7 +1,10 @@
+import { Box, Button, Input, HStack, Flex, Text, Stack, Heading } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react'
+import { DeleteIcon } from '@chakra-ui/icons'
+import { BsToggleOn, BsToggleOff } from 'react-icons/bs'
 let token = localStorage.getItem("token") || "";
 const Todos = () => {
-  const [newTodo,setNewTodo]=useState("")
+  const [newTodo, setNewTodo] = useState("")
   const [todos, setTodos] = useState([]);
 
 
@@ -34,7 +37,7 @@ const Todos = () => {
     fetch(`http://localhost:8080/todos/create`, {
       method: "POST",
       headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
-      body: JSON.stringify({title:newTodo})
+      body: JSON.stringify({ title: newTodo })
     })
       .then(res => res.json())
       .then(res => { getTodos() })
@@ -51,8 +54,11 @@ const Todos = () => {
       body: JSON.stringify({ status })
     })
       .then(res => res.json())
-      .then(res => { getTodos() })
+      .then(res => { getTodos()
+        setNewTodo('')
+      })
       .catch(err => { console.log("there", err) })
+
 
   }
   const handleDelete = (id) => {
@@ -62,36 +68,38 @@ const Todos = () => {
       // body:JSON.stringify({status})
     })
       .then(res => res.json())
-      .then(res => { 
+      .then(res => {
         console.log(res)
         getTodos()
-       })
+      })
       .catch(err => { console.log("there", err) })
 
   }
 
   return (
-    <div>
-      <input type="text" placeholder='write something' onChange={(e)=>{setNewTodo(e.target.value)}} />
-      <button onClick={addTodo}>add Todo</button>
-      <h1>Your Todos</h1>
-      <div>
-        {todos?.map((el, idx) => {
-          return (
-            <div key={idx} style={{ border: "1px blue solid", display: "flex", justifyContent: "center", gap: "3rem", alignItems: 'center' }}>
-              <h3>{el._id}</h3>
-              <h3>{el.title}</h3>
-              <h3>{el.status ? "Done" : "Not Done"}</h3>
-              <div style={{ display: "flex", gap: "20px" }}>
-                <button onClick={() => { handleToggle(el._id, el.status) }}>toggle</button>
-                <button onClick={() => { handleDelete(el._id) }}>delete</button>
-              </div>
-            </div>
-          )
-        })
+    <Box>
+      <HStack w={500} margin={'auto'} mt={10} p={'2rem'}>
+        <Input onChange={(e) => { setNewTodo(e.target.value) }} variant='filled' type="text" placeholder='write something' />
+        <Button cursor={'pointer'} bg={'blue.400'} color={'white'} onClick={addTodo}>Add Todo</Button>
+      </HStack>
+      <Heading>Your Todos</Heading>
+      <Stack w={'auto'} p={'2rem'} boxShadow={' rgba(100, 100, 111, 0.2) 0px 7px 29px 0px'} spacing={5} mt={10} textAlign={'center'} alignItems={'center'} margin={'auto'} >
+        {
+          todos?.map((el, idx) => {
+            return (
+              <Flex textTransform={'uppercase'} key={idx} p={'0.5rem'} boxShadow={"rgba(67, 71, 85, 0.27) 0px 0px 0.25em, rgba(90, 125, 188, 0.05) 0px 0.25em 1em"}textAlign={'center'} gap={20} direction={'row'} alignItems={'center'} fontWeight={'bold'} justifyContent={'space-arround'} >
+
+                <Box w={180} ><Text>{idx+1}</Text></Box>
+                <Box w={180}><Text>{el.title}</Text></Box>
+                <Box w={180}><Text>{el.status ? <span style={{color:'#188556'}}>Done </span>: <span style={{color:'red'}}>Not Done</span>}</Text></Box>
+                <Box w={180}><Button bg={'blue.400'} cursor={'pointer'} color={'white'} onClick={() => { handleToggle(el._id, el.status) }}>{!el.status ? <BsToggleOff /> : <BsToggleOn />}</Button></Box>
+                <Box w={180}><Button bg={'blue.400'} cursor={'pointer'} color={'white'} onClick={() => { handleDelete(el._id) }}><DeleteIcon color={'red'} /></Button></Box>
+              </Flex>
+            )
+          })
         }
-      </div>
-    </div>
+      </Stack>
+    </Box>
   )
 }
 
