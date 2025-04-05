@@ -7,22 +7,16 @@ const bcrypt = require("bcrypt");
 
 const express = require("express");
 const cors = require("cors");
+const path = require("path");
 const UserModel = require("./Models/user.model");
 
 const app = express();
 app.use(express.json());
 
 // Serving Frontend
-const path = require("path");
+
 console.log("working directory->", __dirname);
-console.log("environment variables-->", process.env)
-if (process.env.NODE_ENV === "production") {
-	app.use(express.static(path.join(__dirname, "../frontend/build")));
-  
-	app.get("*", (req, res) => {
-	  res.sendFile(path.join(__dirname, "../frontend/build", "index.html"));
-	});
-  }
+console.log("environment variables-->", process.env);
 
 app.get("/", (req, res) => {
   res.send("welcome home");
@@ -60,6 +54,14 @@ app.post("/api/login", async (req, res) => {
 // app.use(authenticate)
 // notes routes connected to notes collection
 app.use("/api/todos", todosRouter);
+
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static(path.join(__dirname, "../frontend/build")));
+
+  app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, "../frontend/build", "index.html"));
+  });
+}
 
 app.listen(process.env.PORT, async () => {
   try {
