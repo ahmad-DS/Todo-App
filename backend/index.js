@@ -13,6 +13,16 @@ const UserModel = require("./Models/user.model");
 const app = express();
 app.use(express.json());
 
+// Serving Frontend
+// const path = require("path");
+
+// app.use(express.static(path.join(__dirname, "../client/build")));
+
+// app.get("*", (req, res) => {
+//   res.sendFile(path.join(__dirname, "../client/build", "index.html"));
+// });
+
+
 
 app.get("/", (req, res) => {
 	res.send("welcome home")
