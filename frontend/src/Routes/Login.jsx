@@ -32,7 +32,7 @@ const Login = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    fetch("http://localhost:8080/login", {
+    fetch("/api/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(user)
@@ -101,7 +101,7 @@ const Login = () => {
                   type="submit"
 
                 >
-                  Sign up
+                  LogIn
                 </Button>
               </Stack>
               <Stack pt={0}>
