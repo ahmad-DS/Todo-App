@@ -18,9 +18,9 @@ app.use(express.json());
 console.log("working directory->", __dirname);
 console.log("environment variables-->", process.env);
 
-app.get("/", (req, res) => {
-  res.send("welcome home");
-});
+// app.get("/", (req, res) => {
+//   res.send("welcome home");
+// });
 app.use(cors());
 //sign up request
 app.post("/api/signup", async (req, res) => {
