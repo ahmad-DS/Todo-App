@@ -7,8 +7,10 @@ const notes = Router();
 
 notes.get("/", authenticate, async (req, res) => {
 	const { userId } = req.body;
+	console.log("user id ::", userId)
 	try {
 		let allTodos = await TodosModel.find({ userId });
+		console.log("all todos", allTodos)
 		res.json({ data: allTodos })
 	}
 	catch (err) { res.status(404).send({ msg: "please login" }) }
@@ -24,7 +26,7 @@ const validate = (req, res, next) => {
 }
 notes.post("/create", authenticate, async (req, res) => {
 	const new_note = new TodosModel(req.body);
-	console.log(new_note)
+	console.log("new Note-->", new_note)
 	await new_note.save()
 
 	res.send({msg:"new todo added successfully"})
