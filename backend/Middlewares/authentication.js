@@ -1,9 +1,9 @@
 const jwt = require("jsonwebtoken");
 const authenticate = (req, res, next) => {
-	console.log(req.headers);
-	const token = req.headers.authorization.split(" ")[1];
-	jwt.verify(token, 'passkey', function (err, decoded) {
-		if (err) res.send("Please Login");
+	const todoAppToken = req.cookies.todo_app_token;
+	jwt.verify(todoAppToken, 'passkey', function (err, decoded) {
+		console.log("error", err)
+		if (err) res.status(401).send("Please Login");
 		else {
 			req.body.userId = decoded.userId;
 			next()

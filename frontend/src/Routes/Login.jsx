@@ -16,7 +16,7 @@ import { Link, useNavigate } from "react-router-dom"
 import { useState } from 'react';
 import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
 
-let token = localStorage.getItem("token") || ""
+// let token = localStorage.getItem("token") || ""
 
 const Login = () => {
   const navigate = useNavigate()
@@ -34,12 +34,13 @@ const Login = () => {
     e.preventDefault();
     fetch("/api/login", {
       method: "POST",
+      credentials: "include", // <--- required for setting cookie
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(user)
     })
       .then(res => res.json())
       .then(res => {
-        console.log(res);
+        console.log("login api response", res);
         alert("successfully logged in");
         navigate("/todos")
 
