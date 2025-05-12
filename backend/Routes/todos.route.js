@@ -5,7 +5,7 @@ const TodosModel = require("../Models/todos.model");
 
 const notes = Router();
 
-notes.get("/", authenticate, async (req, res) => {
+notes.get("/", async (req, res) => {
 	const { userId } = req.body;
 	console.log("user id ::", userId)
 	try {
@@ -24,7 +24,7 @@ const validate = (req, res, next) => {
 		next()
 	} else res.json({ msg: "data insufficient" })
 }
-notes.post("/create", authenticate, async (req, res) => {
+notes.post("/create", async (req, res) => {
 	const new_note = new TodosModel(req.body);
 	console.log("new Note-->", new_note)
 	await new_note.save()
@@ -32,7 +32,7 @@ notes.post("/create", authenticate, async (req, res) => {
 	res.send({msg:"new todo added successfully"})
 })
 
-notes.patch("/:todoId", authenticate, async (req, res) => {
+notes.patch("/:todoId", async (req, res) => {
 	// console.log('params: ', req.params, ' query: ', req.query, ' body: ', req.body);
 	const todoId = req.params.todoId;
 	const { userId } = req.body;
@@ -42,7 +42,7 @@ notes.patch("/:todoId", authenticate, async (req, res) => {
 	res.send({ msg: `todo with id ${todoId} has been updated` })
 })
 
-notes.delete("/:todoId", authenticate, async (req, res) => {
+notes.delete("/:todoId", async (req, res) => {
 	const todoId = req.params.todoId;
 	const { userId } = req.body;
 
