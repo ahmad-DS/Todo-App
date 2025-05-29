@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 import {
   Box,
   Flex,
@@ -12,96 +12,128 @@ import {
   useColorModeValue,
   Stack,
   useColorMode,
-  Center,
+  IconButton,
+  Collapse,
+  useDisclosure,
+  VStack,
+  HStack,
+  Link as ChakraLink,
+  Text,
 } from '@chakra-ui/react';
-import { MoonIcon, SunIcon } from '@chakra-ui/icons';
-import {Link} from "react-router-dom"
-const NavLink = ({ href,title }) => (
-  <Link
-    px={2}
-    py={1}
-    rounded={'md'}
-    
+import { MoonIcon, SunIcon, HamburgerIcon, CloseIcon } from '@chakra-ui/icons';
+import { Link } from 'react-router-dom';
+
+const NavLink = ({ href, title, onClick }) => (
+  <ChakraLink
+    as={Link}
+    to={href}
+    px={3}
+    py={2}
+    onClick={onClick}
+    fontWeight="medium"
+    borderRadius="md"
+    fontSize="md"
     _hover={{
       textDecoration: 'none',
-      bg: useColorModeValue('gray.200', 'gray.700'),
+      bg: useColorModeValue('blue.100', 'gray.700'),
+      color: useColorModeValue('blue.600', 'blue.300'),
     }}
-    to={href}>
+    w="100%"
+    textAlign="left"
+  >
     {title}
-  </Link>
+  </ChakraLink>
 );
 
-const y =[
-	{
-		href:"/todos",
-		title:'Todo'
-	},
-	{
-		href:"/signup",
-		title:'SignUp'
-	},
-	{
-		href:"/login",
-		title:'LogIn'
-	},
-]
+const navItems = [
+  { href: '/todos', title: 'Todos' },
+  { href: '/signup', title: 'Sign Up' },
+  { href: '/login', title: 'Log In' },
+];
 
 export default function Navbar() {
   const { colorMode, toggleColorMode } = useColorMode();
-  // const { isOpen, onOpen, onClose } = useDisclosure();
+  const { isOpen, onToggle, onClose } = useDisclosure();
+
   return (
-    <>
-      <Box bg={useColorModeValue('blue.400', 'gray.900')} px={4} >
-        <Flex h={16} alignItems={'center'} justifyContent={'space-between'}>
-          <Box fontWeight={'bold'}><Link>Todo Home</Link></Box>
+    <Box bg={useColorModeValue('blue.400', 'gray.900')} px={4}>
+      <Flex h={16} alignItems="center" justifyContent="space-between">
+        {/* Logo */}
+        <ChakraLink
+          as={Link}
+          to="/"
+          fontSize="xl"
+          fontWeight="bold"
+          color="white"
+        >
+          Todo App
+        </ChakraLink>
 
-          <Flex alignItems={'center'} gap={5} fontWeight={500} fontFamily={'cursive'}>
-			{
-				y.map((el,i)=>{
-					console.log(el)
-					return <NavLink href={el.href} title={el.title}/>
-				})
-			}
-            <Stack direction={'row'} spacing={7}>
-              <Button onClick={toggleColorMode}>
-                {colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
-              </Button>
+        {/* Hamburger Icon */}
+        <IconButton
+          size="md"
+          icon={isOpen ? <CloseIcon /> : <HamburgerIcon />}
+          aria-label="Toggle Navigation"
+          display={{ md: 'none' }}
+          onClick={onToggle}
+          color="white"
+          bg="transparent"
+          _hover={{ bg: 'blue.500' }}
+        />
 
-              <Menu>
-                <MenuButton
-                  as={Button}
-                  rounded={'full'}
-                  variant={'link'}
-                  cursor={'pointer'}
-                  minW={0}>
-                  <Avatar
-                    size={'sm'}
-                    src={'https://avatars.githubusercontent.com/u/63135773?v=4'}
-                  />
-                </MenuButton>
-                <MenuList alignItems={'center'}>
-                  <br />
-                  <Center>
-                    <Avatar
-                      size={'2xl'}
-                      src={'https://avatars.githubusercontent.com/u/63135773?v=4'}
-                    />
-                  </Center>
-                  <br />
-                  <Center>
-                    <p>Username</p>
-                  </Center>
-                  <br />
-                  <MenuDivider />
-                  <MenuItem>Your Servers</MenuItem>
-                  <MenuItem>Account Settings</MenuItem>
-                  <MenuItem>Logout</MenuItem>
-                </MenuList>
-              </Menu>
-            </Stack>
-          </Flex>
-        </Flex>
-      </Box>
-    </>
+        {/* Desktop Links */}
+        <HStack spacing={4} display={{ base: 'none', md: 'flex' }} alignItems="center">
+          {navItems.map((item) => (
+            <NavLink key={item.href} {...item} />
+          ))}
+
+          <Button onClick={toggleColorMode} size="sm" variant="ghost" color="white">
+            {colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
+          </Button>
+
+          <Menu>
+            <MenuButton
+              as={Button}
+              rounded="full"
+              variant="link"
+              cursor="pointer"
+              minW={0}
+            >
+              <Avatar
+                size="sm"
+                src="https://avatars.githubusercontent.com/u/63135773?v=4"
+              />
+            </MenuButton>
+            <MenuList>
+              <Box textAlign="center" p={3}>
+                <Avatar
+                  size="lg"
+                  src="https://avatars.githubusercontent.com/u/63135773?v=4"
+                  mb={2}
+                />
+                <Text fontWeight="bold">Shakil Ahmad</Text>
+              </Box>
+              <MenuDivider />
+              <MenuItem>Account Settings</MenuItem>
+              <MenuItem>Logout</MenuItem>
+            </MenuList>
+          </Menu>
+        </HStack>
+      </Flex>
+
+      {/* Mobile Links */}
+      <Collapse in={isOpen} animateOpacity>
+        <Box pb={4} display={{ md: 'none' }}>
+          <VStack spacing={3} align="start">
+            {navItems.map((item) => (
+              <NavLink key={item.href} {...item} onClick={onClose} />
+            ))}
+            <Button onClick={toggleColorMode} size="sm" variant="ghost" color="white">
+              {colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
+            </Button>
+          </VStack>
+        </Box>
+      </Collapse>
+    </Box>
   );
 }

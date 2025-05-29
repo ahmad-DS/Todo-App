@@ -2,19 +2,22 @@ import {
   Box,
   Button,
   Input,
-  HStack,
   Flex,
   Text,
   Stack,
   Heading,
+  useToast,
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import { DeleteIcon } from "@chakra-ui/icons";
 import { BsToggleOn, BsToggleOff } from "react-icons/bs";
+
 let token = localStorage.getItem("token") || "";
+
 const Todos = () => {
   const [newTodo, setNewTodo] = useState("");
   const [todos, setTodos] = useState([]);
+  const toast = useToast();
 
   const getTodos = () => {
     fetch("/api/todos", {
@@ -22,22 +25,16 @@ const Todos = () => {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => res.json())
-      .then((res) => {
-        console.log(res);
-        setTodos(res.data);
-      })
+      .then((res) => setTodos(res.data))
       .catch((err) => console.log(err));
   };
-
-  //delete request
 
   useEffect(() => {
     getTodos();
   }, []);
 
-  //add new todo
   const addTodo = () => {
-    // console.log("added")
+    if (!newTodo.trim()) return;
     fetch(`/api/todos/create`, {
       method: "POST",
       headers: {
@@ -47,141 +44,107 @@ const Todos = () => {
       body: JSON.stringify({ title: newTodo }),
     })
       .then((res) => res.json())
-      .then((res) => {
+      .then(() => {
         getTodos();
+        setNewTodo("");
+        toast({ title: "Todo added!", status: "success", duration: 2000 });
       })
-      .catch((err) => {
-        console.log("there", err);
-      });
+      .catch(() => toast({ title: "Error adding todo", status: "error" }));
   };
 
   const handleToggle = (id, status) => {
-    status = status ? false : true;
     fetch(`/api/todos/${id}`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({ status }),
+      body: JSON.stringify({ status: !status }),
     })
       .then((res) => res.json())
-      .then((res) => {
-        getTodos();
-        setNewTodo("");
-      })
-      .catch((err) => {
-        console.log("there", err);
-      });
+      .then(() => getTodos());
   };
+
   const handleDelete = (id) => {
     fetch(`/api/todos/${id}`, {
       method: "DELETE",
       headers: {
-        "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      // body:JSON.stringify({status})
     })
       .then((res) => res.json())
-      .then((res) => {
-        console.log(res);
+      .then(() => {
         getTodos();
-      })
-      .catch((err) => {
-        console.log("there", err);
+        toast({ title: "Todo deleted", status: "info", duration: 2000 });
       });
   };
 
   return (
-    <Box>
-      <HStack w={500} margin={"auto"} mt={10} p={"2rem"}>
+    <Box maxW="600px" mx="auto" py={10} px={4}>
+      <Heading mb={6} textAlign="center">
+        Todo Manager
+      </Heading>
+
+      <Flex gap={3} mb={8}>
         <Input
-          onChange={(e) => {
-            setNewTodo(e.target.value);
-          }}
+          value={newTodo}
+          onChange={(e) => setNewTodo(e.target.value)}
+          placeholder="Add a new todo"
           variant="filled"
-          type="text"
-          placeholder="write something"
         />
-        <Button
-          cursor={"pointer"}
-          bg={"blue.400"}
-          color={"white"}
-          onClick={addTodo}
-        >
-          Add Todo
+        <Button colorScheme="blue" onClick={addTodo}>
+          Add
         </Button>
-      </HStack>
-      <Heading>Your Todos</Heading>
-      <Stack
-        w={"auto"}
-        p={"2rem"}
-        boxShadow={" rgba(100, 100, 111, 0.2) 0px 7px 29px 0px"}
-        spacing={5}
-        mt={10}
-        textAlign={"center"}
-        alignItems={"center"}
-        margin={"auto"}
-      >
-        {todos?.map((el, idx) => {
-          return (
+      </Flex>
+
+      <Stack spacing={4}>
+        {todos.map((el, idx) => (
+          <Flex
+            key={el._id}
+            p={4}
+            boxShadow="md"
+            borderRadius="md"
+            align="center"
+            justify="space-between"
+            bg="gray.50"
+            direction={{ base: "column", md: "row" }}
+          >
             <Flex
-              textTransform={"uppercase"}
-              key={idx}
-              p={"0.5rem"}
-              boxShadow={
-                "rgba(67, 71, 85, 0.27) 0px 0px 0.25em, rgba(90, 125, 188, 0.05) 0px 0.25em 1em"
-              }
-              textAlign={"center"}
-              gap={20}
-              direction={"row"}
-              alignItems={"center"}
-              fontWeight={"bold"}
-              justifyContent={"space-arround"}
+              direction="column"
+              flex="1"
+              align={{ base: "center", md: "flex-start" }}
+              textAlign={{ base: "center", md: "left" }}
+              mb={{ base: 3, md: 0 }}
             >
-              <Box w={180}>
-                <Text>{idx + 1}</Text>
-              </Box>
-              <Box w={180}>
-                <Text>{el.title}</Text>
-              </Box>
-              <Box w={180}>
-                <Text>
-                  {el.status ? (
-                    <span style={{ color: "#188556" }}>Done </span>
-                  ) : (
-                    <span style={{ color: "red" }}>Not Done</span>
-                  )}
-                </Text>
-              </Box>
-              <Box w={180}>
-                <Button
-                  bg={"blue.400"}
-                  cursor={"pointer"}
-                  color={"white"}
-                  onClick={() => {
-                    handleToggle(el._id, el.status);
-                  }}
-                >
-                  {!el.status ? <BsToggleOff /> : <BsToggleOn />}
-                </Button>
-              </Box>
-              <Box w={180}>
-                <Button
-                  bg={"blue.400"}
-                  cursor={"pointer"}
-                  color={"white"}
-                  onClick={() => {
-                    handleDelete(el._id);
-                  }}
-                >
-                  <DeleteIcon color={"red"} />
-                </Button>
-              </Box>
+              <Text fontWeight="bold" isTruncated maxW="100%">
+                {idx + 1}. {el.title}
+              </Text>
+              <Text
+                fontSize="sm"
+                color={el.status ? "green.500" : "red.400"}
+                mt={1}
+              >
+                {el.status ? "Done" : "Not Done"}
+              </Text>
             </Flex>
-          );
-        })}
+
+            <Flex gap={2}>
+              <Button
+                onClick={() => handleToggle(el._id, el.status)}
+                colorScheme={el.status ? "green" : "gray"}
+              >
+                {el.status ? (
+                  <BsToggleOn size={20} />
+                ) : (
+                  <BsToggleOff size={20} />
+                )}
+              </Button>
+              <Button colorScheme="red" onClick={() => handleDelete(el._id)}>
+                <DeleteIcon />
+              </Button>
+            </Flex>
+          </Flex>
+        ))}
       </Stack>
     </Box>
   );
