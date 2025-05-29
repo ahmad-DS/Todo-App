@@ -72,12 +72,6 @@ app.post("/api/login", async (req, res) => {
   }
 });
 
-// Authentication middleware
-app.use(authenticate);
-
-// notes routes connected to notes collection
-app.use("/api/todos", todosRouter);
-
 // Serving Frontend
 if (process.env.NODE_ENV === "production") {
   app.use(express.static(path.join(__dirname, "../frontend/build")));
@@ -86,6 +80,12 @@ if (process.env.NODE_ENV === "production") {
     res.sendFile(path.join(__dirname, "../frontend/build", "index.html"));
   });
 }
+
+// Authentication middleware
+app.use(authenticate);
+
+// notes routes connected to notes collection
+app.use("/api/todos", todosRouter);
 
 app.listen(process.env.PORT, async () => {
   try {
