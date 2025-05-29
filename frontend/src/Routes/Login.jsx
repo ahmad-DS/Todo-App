@@ -46,7 +46,9 @@ const Login = () => {
 
         localStorage.setItem("token", res.token)
       })
-      .catch(err => { console.log(err) })
+      .catch(err => { 
+        alert(`login failed:: ${err.message}`)
+        console.log(err) })
   }
   return (
     <Flex

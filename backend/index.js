@@ -41,7 +41,7 @@ app.post("/api/signup", async (req, res) => {
 
 app.post("/api/login", async (req, res) => {
   try {
-    const expiresIn = 2 * 60;
+    const expiresIn = 60 * 60; //1 hour
     const { email, password } = req.body;
     console.log("req body", req.body);
     const user = await UserModel.findOne({ email });
