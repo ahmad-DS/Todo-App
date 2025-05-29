@@ -5,6 +5,9 @@ const TodosModel = require("../Models/todos.model");
 
 const notes = Router();
 
+// Authentication middleware
+notes.use(authenticate);
+
 notes.get("/", async (req, res) => {
 	const { userId } = req.body;
 	console.log("user id ::", userId)
