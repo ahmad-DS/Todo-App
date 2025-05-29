@@ -19,10 +19,10 @@ app.use(cookieParser());
 // console.log("working directory->", __dirname);
 // console.log("environment variables-->", process.env);
 
-app.use(cors({
-  origin: "http://localhost:3000", // Your React frontend
-  credentials: true
-}));
+// app.use(cors({
+//   origin: "http://localhost:3000", // Your React frontend
+//   credentials: true
+// }));
 
 //sign up request
 app.post("/api/signup", async (req, res) => {
