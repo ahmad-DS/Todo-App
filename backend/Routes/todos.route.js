@@ -8,6 +8,7 @@ const notes = Router();
 // Authentication middleware
 notes.use(authenticate);
 
+// Get all todos
 notes.get("/", async (req, res) => {
 	const { userId } = req.body;
 	console.log("user id ::", userId)
@@ -17,17 +18,52 @@ notes.get("/", async (req, res) => {
 		res.json({ data: allTodos })
 	}
 	catch (err) { res.status(404).send({ msg: "please login" }) }
-
-
 })
 
+// Get todos by quadrant
+notes.get("/quadrant/:quadrant", async (req, res) => {
+	const { userId } = req.body;
+	const { quadrant } = req.params;
+	
+	let query = { userId };
+	
+	switch(quadrant) {
+		case '1': // Urgent & Important
+			query.isUrgent = true;
+			query.isImportant = true;
+			break;
+		case '2': // Important but Not Urgent
+			query.isUrgent = false;
+			query.isImportant = true;
+			break;
+		case '3': // Urgent but Not Important
+			query.isUrgent = true;
+			query.isImportant = false;
+			break;
+		case '4': // Neither Urgent nor Important
+			query.isUrgent = false;
+			query.isImportant = false;
+			break;
+		default:
+			return res.status(400).json({ msg: "Invalid quadrant" });
+	}
+
+	try {
+		const todos = await TodosModel.find(query);
+		res.json({ data: todos });
+	} catch (err) {
+		res.status(500).json({ msg: "Error fetching todos" });
+	}
+});
+
 const validate = (req, res, next) => {
-	const { title, status } = req.body;
-	if (title && status) {
+	const { title } = req.body;
+	if (title) {
 		next()
-	} else res.json({ msg: "data insufficient" })
+	} else res.json({ msg: "title is required" })
 }
-notes.post("/create", async (req, res) => {
+
+notes.post("/create", validate, async (req, res) => {
 	const new_note = new TodosModel(req.body);
 	console.log("new Note-->", new_note)
 	await new_note.save()
