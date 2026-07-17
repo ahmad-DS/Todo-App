@@ -6,7 +6,7 @@ import {
   FormLabel,
   Input,
   InputGroup,
-  HStack,
+  // HStack,
   InputRightElement,
   Stack,
   Button,
@@ -33,7 +33,7 @@ function Signup() {
   const handleChange = (e) => {
     const { name, value } = e.target;
     // console.log(name,value)
-    setUser({ ...user, [name]: name == "age" ? +value : value })
+    setUser({ ...user, [name]: name === "age" ? +value : value })
 
   }
   console.log(user)
