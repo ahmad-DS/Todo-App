@@ -24,6 +24,7 @@ const initState = {
   password: "",
   age: ""
 }
+
 function Signup() {
 
   const [showPassword, setShowPassword] = useState(false);
