@@ -72,11 +72,9 @@ app.post("/api/login", async (req, res) => {
   }
 });
 
-// Authentication middleware
-app.use(authenticate);
-
 // notes routes connected to notes collection
-app.use("/api/todos", todosRouter);
+// passing authenticate middleware only to todos router
+app.use("/api/todos", authenticate, todosRouter);
 
 // Serving Frontend
 if (process.env.NODE_ENV === "production") {
