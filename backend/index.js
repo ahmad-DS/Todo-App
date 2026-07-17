@@ -19,10 +19,10 @@ app.use(cookieParser());
 // console.log("working directory->", __dirname);
 // console.log("environment variables-->", process.env);
 
-app.use(cors({
-  origin: "http://localhost:3000", // Your React frontend
-  credentials: true
-}));
+// app.use(cors({
+//   origin: "http://localhost:3000", // Your React frontend
+//   credentials: true
+// }));
 
 //sign up request
 app.post("/api/signup", async (req, res) => {
@@ -93,7 +93,7 @@ app.listen(process.env.PORT, async () => {
     console.log("connection is set with mongodb");
   } catch (err) {
     console.log("connection couldn't be set with mongodb");
-    console.log(err);
+    console.error("database error: ", err);
   }
   console.log(`sever has started at port ${process.env.PORT}`);
 });
