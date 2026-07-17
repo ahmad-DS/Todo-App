@@ -31,7 +31,7 @@ Todo App is a lightweight productivity tool for personal task tracking. Its core
 
 ### 1. Clone the repository
 ```bash
-git clone <your-repository-url>
+git clone https://github.com/ahmad-DS/Todo-App.git
 cd Todo-App
 ```
 
@@ -78,5 +78,3 @@ http://localhost:3000
 ### Screenshots
 
 ![Todo App Screenshot](frontend/public/app_screenshots/Screenshot%202026-07-17%20154000.png)
-
-No public deployment link is available yet, but the screenshot above highlights the current interface and user experience.
