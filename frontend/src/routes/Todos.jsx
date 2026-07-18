@@ -9,11 +9,11 @@ import {
   useToast,
   Container,
   Badge,
+  Switch,
   useColorModeValue,
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import { DeleteIcon } from "@chakra-ui/icons";
-import { BsToggleOn, BsToggleOff } from "react-icons/bs";
 
 let token = localStorage.getItem("token") || "";
 
@@ -152,10 +152,14 @@ const Todos = () => {
                     </Badge>
                   </Flex>
 
-                  <Flex gap={2}>
-                    <Button onClick={() => handleToggle(el._id, el.status)} colorScheme={el.status ? "green" : "gray"}>
-                      {el.status ? <BsToggleOn size={20} /> : <BsToggleOff size={20} />}
-                    </Button>
+                  <Flex gap={2} align="center">
+                    <Switch
+                      colorScheme="green"
+                      size="lg"
+                      isChecked={el.status}
+                      onChange={() => handleToggle(el._id, el.status)}
+                      aria-label={`Toggle todo ${idx + 1}`}
+                    />
                     <Button colorScheme="red" variant="outline" onClick={() => handleDelete(el._id)}>
                       <DeleteIcon />
                     </Button>
