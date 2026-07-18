@@ -19,10 +19,12 @@ app.use(cookieParser());
 // console.log("working directory->", __dirname);
 // console.log("environment variables-->", process.env);
 
-// app.use(cors({
-//   origin: "http://localhost:3000", // Your React frontend
-//   credentials: true
-// }));
+// app.use(
+//   cors({
+//     origin: "http://localhost:3000", // Your React frontend
+//     credentials: true,
+//   }),
+// );
 
 //sign up request
 app.post("/api/signup", async (req, res) => {
@@ -49,7 +51,7 @@ app.post("/api/login", async (req, res) => {
     console.log("matching user from db", user);
     const hash = user.password;
     bcrypt.compare(password, hash, function (err, result) {
-      console.log("err::", err, "result::", result)
+      console.log("err::", err, "result::", result);
       if (result) {
         const token = jwt.sign({ userId: user._id }, "passkey", {
           expiresIn,
