@@ -1,4 +1,4 @@
-const TodosModel = require("../Models/todos.model");
+import TodosModel from "../Models/todos.model.js";
 
 const findByUserId = async (userId) => {
   return TodosModel.find({ userId });
@@ -34,10 +34,12 @@ const remove = async (todoId, userId) => {
   });
 };
 
-module.exports = {
+const TodoRepository = {
   findByUserId,
   countByUserId,
   create,
   update,
   remove,
 };
+
+export default TodoRepository;

@@ -1,49 +1,50 @@
-const connection = require("./Config/db");
-const todosRouter = require("./Routes/todos.route");
+import express from "express";
+import cors from "cors";
 
 // importing bcrypt and jwt library and cookie-parser
-const jwt = require("jsonwebtoken");
-const bcrypt = require("bcrypt");
-const cookieParser = require("cookie-parser");
+import jwt from "jsonwebtoken";
+import bcrypt from "bcrypt";
+import cookieParser from "cookie-parser";
 
-const express = require("express");
-const cors = require("cors");
-const path = require("path");
-const UserModel = require("./Models/user.model");
-const authenticate = require("./Middlewares/authentication");
+import path from "path";
+import { fileURLToPath } from "url";
+
+import connection from "./Config/db.js";
+import todosRouter from "./Routes/todos.route.js";
+import UserModel from "./Models/user.model.js";
+import authenticate from "./Middlewares/authentication.js";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 app.use(express.json());
 app.use(cookieParser());
 
-// console.log("working directory->", __dirname);
-// console.log("environment variables-->", process.env);
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    credentials: true,
+  }),
+);
 
-// app.use(
-//   cors({
-//     origin: "http://localhost:3000", // Your React frontend
-//     credentials: true,
-//   }),
-// );
-
-//sign up request
 app.post("/api/signup", async (req, res) => {
   const { password } = req.body;
   bcrypt
     .hash(password, 6)
     .then(async function (hash) {
-      const new_user = new UserModel({ ...req.body, password: hash });
-      await new_user.save();
+      const newUser = new UserModel({ ...req.body, password: hash });
+      await newUser.save();
       res.status(201).json({ msg: "sign up successful" });
     })
-    .catch((err) => {
+    .catch(() => {
       res.send("something went wrong");
     });
 });
 
 app.post("/api/login", async (req, res) => {
   try {
-    const expiresIn = 60 * 60; //1 hour
+    const expiresIn = 60 * 60; //se
     const { email, password } = req.body;
     console.log("req body", req.body);
     const user = await UserModel.findOne({ email });
@@ -59,26 +60,25 @@ app.post("/api/login", async (req, res) => {
         console.log("generated token-->", token);
         res.cookie("todo_app_token", token, {
           httpOnly: true,
-          sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
+          sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
           secure: process.env.NODE_ENV === "production",
           maxAge: expiresIn * 1000,
         });
-        return res.status(201).json({ msg: "login successfull", token: token });
-      } else {
-        console.log("login error message", err);
-        return res.status(401).json({ msg: "Invalid Credentials" });
+        return res.status(201).json({ msg: "login successfull", token });
       }
+
+      console.log("login error message", err);
+      return res.status(401).json({ msg: "Invalid Credentials" });
     });
   } catch (error) {
-    res.status(500).json({ msg: error.message });
+    const message =
+      error instanceof Error ? error.message : "Something went wrong";
+    res.status(500).json({ msg: message });
   }
 });
 
-// notes routes connected to notes collection
-// passing authenticate middleware only to todos router
 app.use("/api/todos", authenticate, todosRouter);
 
-// Serving Frontend
 if (process.env.NODE_ENV === "production") {
   app.use(express.static(path.join(__dirname, "../frontend/build")));
 

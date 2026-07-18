@@ -1,7 +1,6 @@
-const TodosModel = require("../Models/todos.model");
-const TodoService = require("../services/todo.service");
+import TodoService from "../services/todo.service.js";
 
-const getUserTodos = async (req, res) => {
+export const getUserTodos = async (req, res) => {
   try {
     const todos = await TodoService.getUserTodos(req.body.userId);
 
@@ -15,7 +14,7 @@ const getUserTodos = async (req, res) => {
   }
 };
 
-const createUserTodo = async (req, res) => {
+export const createUserTodo = async (req, res) => {
   try {
     const todo = await TodoService.createUserTodo(req.body);
 
@@ -30,13 +29,9 @@ const createUserTodo = async (req, res) => {
   }
 };
 
-const updateTodoById = async (req, res) => {
+export const updateTodoById = async (req, res) => {
   try {
-    console.log("[controller] body", req.body, typeof req.body)
-    const updatedTodo = await TodoService.updateUserTodo(
-      req.params.todoId,
-      req.body,
-    );
+    const updatedTodo = await TodoService.updateUserTodo(req.params.todoId, req.body);
 
     res.status(200).json({
       message: "Todo updated successfully",
@@ -49,7 +44,7 @@ const updateTodoById = async (req, res) => {
   }
 };
 
-const deleteTodoById = async (req, res) => {
+export const deleteTodoById = async (req, res) => {
   try {
     const todoId = req.params.todoId;
     const { userId } = req.body;
@@ -65,9 +60,11 @@ const deleteTodoById = async (req, res) => {
   }
 };
 
-module.exports = {
+const TodoController = {
   getUserTodos,
   createUserTodo,
   updateTodoById,
   deleteTodoById,
 };
+
+export default TodoController;

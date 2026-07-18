@@ -1,10 +1,7 @@
-const TodosModel = require("../Models/todos.model");
-const TodoRepository = require("../repositories/todo.repository");
+import TodoRepository from "../repositories/todo.repository.js";
 
 const getUserTodos = async (userId) => {
   const todos = await TodoRepository.findByUserId(userId);
-  //   const todos = await TodosModel.find({ userId });
-
   return todos;
 };
 
@@ -18,7 +15,7 @@ const createUserTodo = async (todoData) => {
 };
 
 const updateUserTodo = async (todoId, todoData) => {
-  const updatedTodo = await TodoRepository.update(todoId, todoData.userId, todoData)
+  const updatedTodo = await TodoRepository.update(todoId, todoData.userId, todoData);
 
   if (!updatedTodo) {
     throw new Error("Todo not found");
@@ -28,7 +25,7 @@ const updateUserTodo = async (todoId, todoData) => {
 };
 
 const deleteUserTodo = async (todoId, userId) => {
-  const deletedTodo = await TodoRepository.remove(todoId, userId)
+  const deletedTodo = await TodoRepository.remove(todoId, userId);
   if (!deletedTodo) {
     throw new Error("Todo not found");
   }
@@ -36,9 +33,11 @@ const deleteUserTodo = async (todoId, userId) => {
   return deletedTodo;
 };
 
-module.exports = {
+const TodoService = {
   getUserTodos,
   createUserTodo,
   updateUserTodo,
   deleteUserTodo,
 };
+
+export default TodoService;
