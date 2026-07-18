@@ -10,7 +10,6 @@ import {
   MenuItem,
   MenuDivider,
   useColorModeValue,
-  // Stack,
   useColorMode,
   IconButton,
   Collapse,
@@ -31,12 +30,13 @@ const NavLink = ({ href, title, onClick }) => (
     py={2}
     onClick={onClick}
     fontWeight="medium"
-    borderRadius="md"
+    borderRadius="full"
     fontSize="md"
+    color={useColorModeValue('gray.700', 'gray.100')}
     _hover={{
       textDecoration: 'none',
-      bg: useColorModeValue('blue.100', 'gray.700'),
-      color: useColorModeValue('blue.600', 'blue.300'),
+      bg: useColorModeValue('blue.50', 'whiteAlpha.200'),
+      color: useColorModeValue('blue.600', 'blue.200'),
     }}
     w="100%"
     textAlign="left"
@@ -54,63 +54,50 @@ const navItems = [
 export default function Navbar() {
   const { colorMode, toggleColorMode } = useColorMode();
   const { isOpen, onToggle, onClose } = useDisclosure();
+  const navBg = useColorModeValue('white', 'gray.900');
+  const navBorder = useColorModeValue('gray.100', 'gray.700');
+  const brandGradient = useColorModeValue('linear(to-r, blue.600, purple.500)', 'linear(to-r, blue.300, purple.400)');
 
   return (
-    <Box bg={useColorModeValue('blue.400', 'gray.900')} px={4}>
+    <Box bg={navBg} px={4} borderBottomWidth="1px" borderColor={navBorder} boxShadow="sm">
       <Flex h={16} alignItems="center" justifyContent="space-between">
-        {/* Logo */}
         <ChakraLink
           as={Link}
           to="/"
           fontSize="xl"
           fontWeight="bold"
-          color="white"
+          bgClip="text"
+          bgGradient={brandGradient}
         >
-          Todo App
+          Taskly
         </ChakraLink>
 
-        {/* Hamburger Icon */}
         <IconButton
           size="md"
           icon={isOpen ? <CloseIcon /> : <HamburgerIcon />}
           aria-label="Toggle Navigation"
           display={{ md: 'none' }}
           onClick={onToggle}
-          color="white"
-          bg="transparent"
-          _hover={{ bg: 'blue.500' }}
+          variant="ghost"
+          color={useColorModeValue('blue.600', 'blue.200')}
         />
 
-        {/* Desktop Links */}
         <HStack spacing={4} display={{ base: 'none', md: 'flex' }} alignItems="center">
           {navItems.map((item) => (
             <NavLink key={item.href} {...item} />
           ))}
 
-          <Button onClick={toggleColorMode} size="sm" variant="ghost" color="white">
+          <Button onClick={toggleColorMode} size="sm" variant="ghost" colorScheme="blue">
             {colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
           </Button>
 
           <Menu>
-            <MenuButton
-              as={Button}
-              rounded="full"
-              variant="link"
-              cursor="pointer"
-              minW={0}
-            >
-              <Avatar
-                size="sm"
-                src="https://avatars.githubusercontent.com/u/63135773?v=4"
-              />
+            <MenuButton as={Button} rounded="full" variant="ghost" cursor="pointer" minW={0} p={1}>
+              <Avatar size="sm" src="https://avatars.githubusercontent.com/u/63135773?v=4" />
             </MenuButton>
             <MenuList>
               <Box textAlign="center" p={3}>
-                <Avatar
-                  size="lg"
-                  src="https://avatars.githubusercontent.com/u/63135773?v=4"
-                  mb={2}
-                />
+                <Avatar size="lg" src="https://avatars.githubusercontent.com/u/63135773?v=4" mb={2} />
                 <Text fontWeight="bold">Shakil Ahmad</Text>
               </Box>
               <MenuDivider />
@@ -121,14 +108,13 @@ export default function Navbar() {
         </HStack>
       </Flex>
 
-      {/* Mobile Links */}
       <Collapse in={isOpen} animateOpacity>
         <Box pb={4} display={{ md: 'none' }}>
           <VStack spacing={3} align="start">
             {navItems.map((item) => (
               <NavLink key={item.href} {...item} onClick={onClose} />
             ))}
-            <Button onClick={toggleColorMode} size="sm" variant="ghost" color="white">
+            <Button onClick={toggleColorMode} size="sm" variant="ghost" colorScheme="blue">
               {colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
             </Button>
           </VStack>

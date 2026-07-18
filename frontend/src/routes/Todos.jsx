@@ -7,6 +7,9 @@ import {
   Stack,
   Heading,
   useToast,
+  Container,
+  Badge,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import { DeleteIcon } from "@chakra-ui/icons";
@@ -18,6 +21,14 @@ const Todos = () => {
   const [newTodo, setNewTodo] = useState("");
   const [todos, setTodos] = useState([]);
   const toast = useToast();
+  const cardBg = useColorModeValue("white", "gray.800");
+  const emptyStateBg = useColorModeValue("gray.50", "gray.700");
+  const pendingCardBg = useColorModeValue("gray.50", "gray.700");
+  const completedCardBg = useColorModeValue("green.50", "green.900");
+  const borderColor = useColorModeValue("gray.200", "gray.600");
+  const completedBorder = useColorModeValue("green.200", "green.700");
+  const titleColor = useColorModeValue("gray.800", "whiteAlpha.900");
+  const secondaryTextColor = useColorModeValue("gray.600", "gray.300");
 
   const getTodos = () => {
     fetch("/api/todos", {
@@ -25,7 +36,7 @@ const Todos = () => {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => res.json())
-      .then((res) => setTodos(res.data))
+      .then((res) => setTodos(res.data || []))
       .catch((err) => console.log(err));
   };
 
@@ -80,73 +91,82 @@ const Todos = () => {
   };
 
   return (
-    <Box maxW="600px" mx="auto" py={10} px={4}>
-      <Heading mb={6} textAlign="center">
-        Todo Manager
-      </Heading>
+    <Container maxW="760px" py={{ base: 8, md: 12 }} px={4}>
+      <Box bg={cardBg} borderRadius="3xl" boxShadow="xl" p={{ base: 6, md: 8 }} borderWidth="1px">
+        <Stack spacing={6}>
+          <Stack spacing={1}>
+            <Heading textAlign="center" size="lg">
+              Task board
+            </Heading>
+            <Text textAlign="center" color={secondaryTextColor}>
+              Keep your priorities visible and your day calm.
+            </Text>
+          </Stack>
 
-      <Flex gap={3} mb={8}>
-        <Input
-          value={newTodo}
-          onChange={(e) => setNewTodo(e.target.value)}
-          placeholder="Add a new todo"
-          variant="filled"
-        />
-        <Button colorScheme="blue" onClick={addTodo}>
-          Add
-        </Button>
-      </Flex>
-
-      <Stack spacing={4}>
-        {todos.map((el, idx) => (
-          <Flex
-            key={el._id}
-            p={4}
-            boxShadow="md"
-            borderRadius="md"
-            align="center"
-            justify="space-between"
-            bg="gray.50"
-            direction={{ base: "column", md: "row" }}
-          >
-            <Flex
-              direction="column"
-              flex="1"
-              align={{ base: "center", md: "flex-start" }}
-              textAlign={{ base: "center", md: "left" }}
-              mb={{ base: 3, md: 0 }}
-            >
-              <Text fontWeight="bold" isTruncated maxW="100%">
-                {idx + 1}. {el.title}
-              </Text>
-              <Text
-                fontSize="sm"
-                color={el.status ? "green.500" : "red.400"}
-                mt={1}
-              >
-                {el.status ? "Done" : "Not Done"}
-              </Text>
-            </Flex>
-
-            <Flex gap={2}>
-              <Button
-                onClick={() => handleToggle(el._id, el.status)}
-                colorScheme={el.status ? "green" : "gray"}
-              >
-                {el.status ? (
-                  <BsToggleOn size={20} />
-                ) : (
-                  <BsToggleOff size={20} />
-                )}
-              </Button>
-              <Button colorScheme="red" onClick={() => handleDelete(el._id)}>
-                <DeleteIcon />
-              </Button>
-            </Flex>
+          <Flex gap={3} mb={2} direction={{ base: "column", md: "row" }}>
+            <Input
+              value={newTodo}
+              onChange={(e) => setNewTodo(e.target.value)}
+              placeholder="Add a new todo"
+              variant="filled"
+              size="lg"
+            />
+            <Button colorScheme="blue" size="lg" onClick={addTodo}>
+              Add task
+            </Button>
           </Flex>
-        ))}
-      </Stack>
-    </Box>
+
+          <Stack spacing={3}>
+            {todos.length === 0 ? (
+              <Box p={5} borderRadius="xl" bg={emptyStateBg} textAlign="center" color={secondaryTextColor}>
+                No tasks yet. Add your first one above.
+              </Box>
+            ) : (
+              todos.map((el, idx) => (
+                <Flex
+                  key={el._id}
+                  p={4}
+                  borderRadius="2xl"
+                  align="center"
+                  justify="space-between"
+                  bg={el.status ? completedCardBg : pendingCardBg}
+                  direction={{ base: "column", md: "row" }}
+                  borderWidth="1px"
+                  borderColor={el.status ? completedBorder : borderColor}
+                  boxShadow="sm"
+                  _hover={{ transform: "translateY(-1px)", transition: "all 0.2s ease" }}
+                >
+                  <Flex
+                    direction="column"
+                    flex="1"
+                    align={{ base: "center", md: "flex-start" }}
+                    textAlign={{ base: "center", md: "left" }}
+                    mb={{ base: 3, md: 0 }}
+                    minW={0}
+                  >
+                    <Text fontWeight="bold" color={titleColor} isTruncated maxW="100%">
+                      {idx + 1}. {el.title}
+                    </Text>
+                    <Badge colorScheme={el.status ? "green" : "red"} mt={2} borderRadius="full" px={3} py={1}>
+                      {el.status ? "Done" : "Not Done"}
+                    </Badge>
+                  </Flex>
+
+                  <Flex gap={2}>
+                    <Button onClick={() => handleToggle(el._id, el.status)} colorScheme={el.status ? "green" : "gray"}>
+                      {el.status ? <BsToggleOn size={20} /> : <BsToggleOff size={20} />}
+                    </Button>
+                    <Button colorScheme="red" variant="outline" onClick={() => handleDelete(el._id)}>
+                      <DeleteIcon />
+                    </Button>
+                  </Flex>
+                </Flex>
+              ))
+            )}
+          </Stack>
+        </Stack>
+      </Box>
+    </Container>
   );
 };
 
