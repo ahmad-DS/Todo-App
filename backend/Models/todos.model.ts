@@ -1,6 +1,6 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
-const noteSchema = mongoose.Schema(
+const noteSchema = new mongoose.Schema(
   {
     title: { type: String, required: true },
     status: { type: Boolean, default: false },
@@ -8,9 +8,9 @@ const noteSchema = mongoose.Schema(
   },
   {
     versionKey: false,
-  }
+  },
 );
 
 const TodosModel = mongoose.model("note", noteSchema);
 
-module.exports = TodosModel;
+export default TodosModel;
