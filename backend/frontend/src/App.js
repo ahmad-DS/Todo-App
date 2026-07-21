@@ -1,11 +1,11 @@
 import './App.css';
 //
 import {Routes,Route} from "react-router-dom"
-import Signup from './routes/Signup.jsx';
-import Home from './routes/Home.jsx';
-import Login from './routes/Login.jsx';
-import Todos from './routes/Todos.jsx'
-import Navbar from './components/Navbar.jsx';
+import Signup from './routes/Signup.js';
+import Home from './routes/Home.js';
+import Login from './routes/Login.js';
+import Todos from './routes/Todos.js'
+import Navbar from './components/Navbar.js';
 function App() {
   return (
     <div className="App">
