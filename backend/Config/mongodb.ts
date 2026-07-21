@@ -10,7 +10,8 @@ async function connectMongoDB() {
         console.log("mongodb connection is set up successfully");
     } catch (error: any) {
         // con
-        console.error("db connection error:", error.message);
+        // console.error("db connection error:", error.message);
+        console.error(error instanceof Error ? error.stack : error);
     }
 }
 
