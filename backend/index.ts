@@ -84,7 +84,7 @@ app.post("/api/login", async (req: Request, res: Response) => {
 app.use("/api/todos", authenticate, todosRouter);
 
 if (process.env.NODE_ENV === "production") {
-  const frontendBuildPath = path.join(__dirname, "../frontend/build");
+  const frontendBuildPath = path.join(__dirname, "../../frontend/build");
   app.use(express.static(frontendBuildPath));
 
   app.get("*", (req, res) => {
