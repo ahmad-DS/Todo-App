@@ -19,6 +19,7 @@ dns.setServers(['1.1.1.1', '8.8.8.8']);
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+console.log("current directory", __dirname);
 
 const app = express();
 app.use(express.json());
