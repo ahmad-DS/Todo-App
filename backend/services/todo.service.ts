@@ -1,43 +1,44 @@
-import TodoRepository from "../repositories/todo.repository.js";
+import { IRepository } from "../repositories/IRepository.js";
 
-const getUserTodos = async (userId) => {
-  const todos = await TodoRepository.findByUserId(userId);
-  return todos;
-};
+class TodoService {
+  constructor(private repository: IRepository) {}
 
-const createUserTodo = async (todoData) => {
-  const totalTodos = await TodoRepository.countByUserId(todoData.userId);
-  if (totalTodos >= 10) {
-    throw new Error("Todo limit exceeded!");
+  async getUserTodos(userId: string) {
+    const todos = await this.repository.findByUserId(userId);
+    return todos;
   }
 
-  return await TodoRepository.create(todoData);
-};
+  async createUserTodo(todoData: any) {
+    const totalTodos = await this.repository.countByUserId(todoData.userId);
+    if (totalTodos >= 10) {
+      throw new Error("Todo limit exceeded!");
+    }
 
-const updateUserTodo = async (todoId, todoData) => {
-  const updatedTodo = await TodoRepository.update(todoId, todoData.userId, todoData);
-
-  if (!updatedTodo) {
-    throw new Error("Todo not found");
+    return await this.repository.create(todoData);
   }
 
-  return updatedTodo;
-};
+  async updateUserTodo(todoId: string, todoData: any) {
+    const updatedTodo = await this.repository.update(
+      todoId,
+      todoData.userId,
+      todoData,
+    );
 
-const deleteUserTodo = async (todoId, userId) => {
-  const deletedTodo = await TodoRepository.remove(todoId, userId);
-  if (!deletedTodo) {
-    throw new Error("Todo not found");
+    if (!updatedTodo) {
+      throw new Error("Todo not found");
+    }
+
+    return updatedTodo;
   }
 
-  return deletedTodo;
-};
+  async deleteUserTodo(todoId: string, userId: string) {
+    const deletedTodo = await this.repository.remove(todoId, userId);
+    if (!deletedTodo) {
+      throw new Error("Todo not found");
+    }
 
-const TodoService = {
-  getUserTodos,
-  createUserTodo,
-  updateUserTodo,
-  deleteUserTodo,
-};
+    return deletedTodo;
+  }
+}
 
 export default TodoService;

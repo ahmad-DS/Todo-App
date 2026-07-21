@@ -1,10 +1,11 @@
-import jwt from "jsonwebtoken";
+import { Request, Response, NextFunction } from "express";
+import jwt, {JwtPayload, VerifyErrors} from "jsonwebtoken";
 
-const authenticate = (req, res, next) => {
+const authenticate = (req: Request, res: Response, next: NextFunction) => {
   const todoAppToken = req.cookies.todo_app_token;
-  jwt.verify(todoAppToken, "passkey", function (err, decoded) {
+  jwt.verify(todoAppToken, "passkey", function (err: VerifyErrors | null, decoded: JwtPayload | string | undefined) {
     console.error("error-->", err);
-    if (err) {
+    if (err || !decoded || typeof decoded === "string") {
       res.status(401).send("Token not valid");
     } else {
       req.body.userId = decoded.userId;

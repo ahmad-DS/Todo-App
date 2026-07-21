@@ -1,4 +1,4 @@
-import express from "express";
+import express, { Request, Response} from "express";
 import cors from "cors";
 
 // importing bcrypt and jwt library and cookie-parser
@@ -9,10 +9,13 @@ import cookieParser from "cookie-parser";
 import path from "path";
 import { fileURLToPath } from "url";
 
-import connection from "./Config/db.js";
+import connectMongoDB from "./Config/mongodb.js";
 import todosRouter from "./Routes/todos.route.js";
 import UserModel from "./Models/user.model.js";
 import authenticate from "./Middlewares/authentication.js";
+
+import dns from 'node:dns';
+dns.setServers(['1.1.1.1', '8.8.8.8']); 
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -28,7 +31,7 @@ app.use(
   }),
 );
 
-app.post("/api/signup", async (req, res) => {
+app.post("/api/signup", async (req: Request, res: Response) => {
   const { password } = req.body;
   bcrypt
     .hash(password, 6)
@@ -42,7 +45,7 @@ app.post("/api/signup", async (req, res) => {
     });
 });
 
-app.post("/api/login", async (req, res) => {
+app.post("/api/login", async (req: Request, res: Response) => {
   try {
     const expiresIn = 60 * 60; //se
     const { email, password } = req.body;
@@ -88,12 +91,6 @@ if (process.env.NODE_ENV === "production") {
 }
 
 app.listen(process.env.PORT, async () => {
-  try {
-    await connection;
-    console.log("connection is set with mongodb");
-  } catch (err) {
-    console.log("connection couldn't be set with mongodb");
-    console.error("database error: ", err);
-  }
+  await connectMongoDB();
   console.log(`sever has started at port ${process.env.PORT}`);
 });
